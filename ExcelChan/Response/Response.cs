@@ -14,7 +14,7 @@ namespace ExcelChan {
                     Message = "Pyaaa",
                     Status = "Success"
                 },
-                Data = new Data[] {
+                Data = new List<Data>() {
                     new Data() {
                         Cd=1,
                         Name="hoge",
@@ -57,7 +57,7 @@ namespace ExcelChan {
             set;
         }
         [JsonProperty("data")]
-        public Data[] Data {
+        public List<Data> Data {
             get;
             set;
         }

@@ -37,6 +37,10 @@ namespace ExcelChan {
             get;
             private set;
         }
+        public object Actual {
+            get;
+            private set;
+        }
         public bool? TestResult {
             get;
             private set;
@@ -75,7 +79,8 @@ namespace ExcelChan {
         
         public void Evaluate(object response) {
             try {
-                var comparer = GetCompareValue(this.Expected, this.GetActualValue(response));
+                this.Actual = this.GetActualValue(response);
+                var comparer = GetCompareValue(this.Expected, this.Actual);
                 switch (this.Comparer) {
                     case Comparer.Equals:
                         this.TestResult = comparer == Comparer.Equals;
@@ -113,7 +118,7 @@ namespace ExcelChan {
             return p;
         }
 
-        public object GetActualValue(object response) {
+        private object GetActualValue(object response) {
             var value = response;
             int? index = null;
             string name = "";
@@ -124,7 +129,16 @@ namespace ExcelChan {
                     continue;
                 }else if (index.HasValue) {
                     var p = GetPropery(value, name);
-                    value = ((object[])p.GetValue(value))[index.Value];
+                    if (p.PropertyType.IsArray) {
+                        value = ((object[])p.GetValue(value))[index.Value];
+                    } else {
+                        var indexer = p.PropertyType.GetProperty("Item");
+                        if (indexer != null) {
+                            value = indexer.GetValue(p.GetValue(value), new object[] { index.Value });
+                        } else {
+                            throw new NotImplementedException("only `Item` property is supported.");
+                        }     
+                    }
                     index = null;
                 } else {
                     name = this.ActualExpression[i];
@@ -135,7 +149,7 @@ namespace ExcelChan {
             }
             return value;
         }
-        public object GetActualValueByJson(string json) {
+        private object GetActualValueByJson(string json) {
             return GetActualValue(JsonConvert.DeserializeObject(json));
         }
     }
