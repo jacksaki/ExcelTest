@@ -132,7 +132,7 @@ namespace ExcelChan {
                     if (p.PropertyType.IsArray) {
                         value = ((object[])p.GetValue(value))[index.Value];
                     } else {
-                        var indexer = p.PropertyType.GetProperty("Item");
+                        var indexer = p.PropertyType.GetProperty("Item"); 
                         if (indexer != null) {
                             value = indexer.GetValue(p.GetValue(value), new object[] { index.Value });
                         } else {

@@ -16,7 +16,7 @@ namespace ExcelTest {
                 var res = Response.CreateSample();
                 test.Load();
                 test.EvaluateAll(res);
-                foreach (var t in test.TestPairs.Select((item,index)=>(item,index))) {
+                foreach (var t in test.TestPairs.Select((item,index)=>(item,index))) {e
                     Assert.True(t.item.TestResult ?? false, 
                         $"{testName}[{t.index}] `{t.item.Expected}` {t.item.Comparer.GetEnumText()} `{t.item.Actual}` ({string.Join(".",t.item.ActualExpression)})");
                 }
